@@ -32,8 +32,6 @@ interface relValue {
   PK_COLUMN: string
 }
 
-
-
 @Component({
   selector: 'app-crud-grid',
   templateUrl: './crud-grid.component.html',
@@ -141,10 +139,14 @@ export class CrudGridComponent implements OnInit {
   }
 
   getRelations(fetchedRelations: Relationship[]): relValue[] {
-    const rels = fetchedRelations.reduce(this.relationReducer, []);
-    this.fKs = this.getFks(rels);
-    this.getFKValues();
-    return rels;
+    if (fetchedRelations?.length > 0) {
+      const rels = fetchedRelations.reduce(this.relationReducer, []);
+      this.fKs = this.getFks(rels);
+      this.getFKValues();
+      return rels;
+    } else {
+      return [];
+    }
   }
 
   getFKValues() {
@@ -164,7 +166,7 @@ export class CrudGridComponent implements OnInit {
           throw err;
         }
         const allRelationsMeta = JSON.parse(JSON.stringify(result, null, 4)); //format your json output
-        this.RelationsMeta = allRelationsMeta.Meta.Relationships[0].Relationship;
+        this.RelationsMeta = allRelationsMeta.Meta?.Relationships[0]?.Relationship;
         this.getRelations(this.RelationsMeta);
       })
     })
